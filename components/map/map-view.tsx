@@ -18,9 +18,9 @@ export interface MapViewProps {
 }
 
 const DEFAULT_CENTER = {
-  longitude: 78.6569,
-  latitude: 11.1271, // Tamil Nadu center
-  zoom: 6,
+  longitude: 0,
+  latitude: 20, // World map center
+  zoom: 2,
 };
 
 export function MapView({

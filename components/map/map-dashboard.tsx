@@ -3,32 +3,22 @@
 import { useState } from "react";
 import { PublicMap } from "./public-map";
 import { MapDashboardOverlay } from "./map-dashboard-overlay";
+import type { IssueMapMarker } from "@/types";
 
 interface MapDashboardProps {
   categories: { id: string; name: string }[];
 }
 
 export function MapDashboard({ categories }: MapDashboardProps) {
-  const [flyToBbox, setFlyToBbox] = useState<[number, number, number, number] | null>(null);
+  const [flyToTarget, setFlyToTarget] = useState<{ lng: number, lat: number, zoom: number } | null>(null);
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
+  
+  // Real-time map statistics
+  const [mapIssues, setMapIssues] = useState<IssueMapMarker[]>([]);
 
-  const handleLocationSelected = (bbox: any) => {
-    if (bbox && bbox.coordinates && bbox.coordinates[0]) {
-      // GeoJSON Polygon coordinates: [[[lon, lat], [lon, lat], ...]]
-      // We need to extract the min/max lon/lat to form a bounding box
-      const coords = bbox.coordinates[0];
-      let minLon = 180, maxLon = -180, minLat = 90, maxLat = -90;
-      
-      coords.forEach(([lon, lat]: [number, number]) => {
-        if (lon < minLon) minLon = lon;
-        if (lon > maxLon) maxLon = lon;
-        if (lat < minLat) minLat = lat;
-        if (lat > maxLat) maxLat = lat;
-      });
-
-      setFlyToBbox([minLon, minLat, maxLon, maxLat]);
-    }
+  const handleLocationSelected = (target: { lng: number, lat: number, zoom: number }) => {
+    setFlyToTarget(target);
   };
 
   const handleFilterChange = (filters: { status?: string; categoryId?: string }) => {
@@ -36,17 +26,28 @@ export function MapDashboard({ categories }: MapDashboardProps) {
     setCategoryFilter(filters.categoryId);
   };
 
+  // Calculate statistics from the issues currently loaded in the map bounds
+  const stats = {
+    total: mapIssues.length,
+    solved: mapIssues.filter(i => i.status === "RESOLVED").length,
+    pending: mapIssues.filter(i => i.status !== "RESOLVED" && i.priority !== "EMERGENCY").length,
+    emergency: mapIssues.filter(i => i.priority === "EMERGENCY").length,
+  };
+
   return (
     <>
       <PublicMap 
-        flyToBbox={flyToBbox} 
+        flyToTarget={flyToTarget} 
         statusFilter={statusFilter} 
         categoryFilter={categoryFilter} 
+        onIssuesLoaded={setMapIssues}
       />
+      
       <MapDashboardOverlay 
         categories={categories}
         onLocationSelected={handleLocationSelected}
         onFilterChange={handleFilterChange}
+        stats={stats}
       />
       
       {/* Legend */}

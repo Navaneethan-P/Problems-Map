@@ -14,8 +14,10 @@ interface PublicMapProps {
   initialEast?: number;
   initialNorth?: number;
   flyToBbox?: [number, number, number, number] | null;
+  flyToTarget?: { lng: number, lat: number, zoom: number } | null;
   statusFilter?: string;
   categoryFilter?: string;
+  onIssuesLoaded?: (issues: IssueMapMarker[]) => void;
 }
 
 // Custom Supercluster type for our issue markers
@@ -27,14 +29,18 @@ type ClusterGeoJSONProperties = {
   point_count_abbreviated: string;
 };
 
+const EMPTY_ISSUES: IssueMapMarker[] = [];
+
 export function PublicMap({
   initialWest,
   initialSouth,
   initialEast,
   initialNorth,
   flyToBbox,
+  flyToTarget,
   statusFilter,
   categoryFilter,
+  onIssuesLoaded,
 }: PublicMapProps) {
   const router = useRouter();
   const [map, setMap] = useState<maplibregl.Map | null>(null);
@@ -43,17 +49,19 @@ export function PublicMap({
       ? [initialWest, initialSouth!, initialEast!, initialNorth!]
       : null
   );
-  const [zoom, setZoom] = useState(6);
+  const [zoom, setZoom] = useState(2);
   
   // Marker elements reference
   const markersRef = useRef<{ [key: string]: maplibregl.Marker }>({});
 
-  // Handle flyToBbox
+  // Handle flyToTarget and flyToBbox
   useEffect(() => {
-    if (map && flyToBbox) {
+    if (map && flyToTarget) {
+      map.flyTo({ center: [flyToTarget.lng, flyToTarget.lat], zoom: flyToTarget.zoom, duration: 1500 });
+    } else if (map && flyToBbox) {
       map.fitBounds(flyToBbox, { padding: 40, duration: 1500 });
     }
-  }, [map, flyToBbox]);
+  }, [map, flyToBbox, flyToTarget]);
 
   // Supercluster instance
   const supercluster = useMemo(() => {
@@ -64,7 +72,7 @@ export function PublicMap({
   }, []);
 
   // Fetch issues for the current viewport
-  const { data: issues = [], isLoading } = useQuery({
+  const { data: issues = EMPTY_ISSUES, isLoading } = useQuery({
     queryKey: ["map-issues", bbox, statusFilter, categoryFilter],
     queryFn: async () => {
       if (!bbox) return [];
@@ -86,6 +94,13 @@ export function PublicMap({
     },
     enabled: !!bbox,
   });
+
+  // Call onIssuesLoaded callback
+  useEffect(() => {
+    if (onIssuesLoaded) {
+      onIssuesLoaded(issues);
+    }
+  }, [issues, onIssuesLoaded]);
 
   // Update supercluster when data changes
   useEffect(() => {
@@ -197,7 +212,7 @@ export function PublicMap({
   }, [map]);
 
   return (
-    <div className="relative w-full h-full">
+    <div className="absolute inset-0 bg-slate-100">
       <MapView onMapLoad={setMap} />
       
       {isLoading && (

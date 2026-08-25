@@ -13,6 +13,9 @@ interface PublicMapProps {
   initialSouth?: number;
   initialEast?: number;
   initialNorth?: number;
+  flyToBbox?: [number, number, number, number] | null;
+  statusFilter?: string;
+  categoryFilter?: string;
 }
 
 // Custom Supercluster type for our issue markers
@@ -29,6 +32,9 @@ export function PublicMap({
   initialSouth,
   initialEast,
   initialNorth,
+  flyToBbox,
+  statusFilter,
+  categoryFilter,
 }: PublicMapProps) {
   const router = useRouter();
   const [map, setMap] = useState<maplibregl.Map | null>(null);
@@ -42,6 +48,13 @@ export function PublicMap({
   // Marker elements reference
   const markersRef = useRef<{ [key: string]: maplibregl.Marker }>({});
 
+  // Handle flyToBbox
+  useEffect(() => {
+    if (map && flyToBbox) {
+      map.fitBounds(flyToBbox, { padding: 40, duration: 1500 });
+    }
+  }, [map, flyToBbox]);
+
   // Supercluster instance
   const supercluster = useMemo(() => {
     return new Supercluster<IssueGeoJSONProperties, ClusterGeoJSONProperties>({
@@ -52,13 +65,21 @@ export function PublicMap({
 
   // Fetch issues for the current viewport
   const { data: issues = [], isLoading } = useQuery({
-    queryKey: ["map-issues", bbox],
+    queryKey: ["map-issues", bbox, statusFilter, categoryFilter],
     queryFn: async () => {
       if (!bbox) return [];
       const [west, south, east, north] = bbox;
-      const res = await fetch(
-        `/api/issues/map?west=${west}&south=${south}&east=${east}&north=${north}`
-      );
+      
+      const url = new URL("/api/issues/map", window.location.origin);
+      url.searchParams.set("west", west.toString());
+      url.searchParams.set("south", south.toString());
+      url.searchParams.set("east", east.toString());
+      url.searchParams.set("north", north.toString());
+      
+      if (statusFilter) url.searchParams.set("status", statusFilter);
+      if (categoryFilter) url.searchParams.set("category_id", categoryFilter);
+      
+      const res = await fetch(url.toString());
       if (!res.ok) throw new Error("Failed to fetch map data");
       const json = await res.json();
       return json.data as IssueMapMarker[];

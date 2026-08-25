@@ -396,8 +396,8 @@ export default function ReportIssuePage() {
                         <span className="text-xs mt-1">Up to 6 files</span>
                         <input 
                           type="file" 
-                          accept="image/*,video/mp4"
-                          multiple
+                          accept="image/*"
+                          capture="environment"
                           className="hidden"
                           onChange={handleFileUpload}
                           disabled={isUploading}

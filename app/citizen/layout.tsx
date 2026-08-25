@@ -34,7 +34,7 @@ export default async function CitizenLayout({
 
         <div className="p-4">
           <Button asChild className="w-full justify-start" size="lg">
-            <Link href="/report">
+            <Link href="/citizen/report">
               <Plus className="mr-2 h-5 w-5" />
               Report Issue
             </Link>
@@ -111,7 +111,7 @@ export default async function CitizenLayout({
             <MapPin className="h-5 w-5" />
             <span className="text-[10px] font-medium mt-1">Dashboard</span>
           </Link>
-          <Link href="/report" className="flex flex-col items-center p-2 text-slate-500">
+          <Link href="/citizen/report" className="flex flex-col items-center p-2 text-slate-500">
             <div className="bg-brand-500 text-white p-2 rounded-full -mt-6 border-4 border-white shadow-sm">
               <Plus className="h-6 w-6" />
             </div>

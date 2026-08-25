@@ -96,7 +96,7 @@ export default async function IssueDetailPage({
             </div>
             <h1 className="text-3xl font-bold text-slate-900 mb-4">{issue.title}</h1>
             
-            <div className="flex items-center gap-4 text-sm text-slate-500 mb-6">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 mb-6">
               <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4" />
                 {formatDate(issue.created_at)}
@@ -104,6 +104,26 @@ export default async function IssueDetailPage({
               <div>•</div>
               <div className="flex items-center gap-1">
                 Reported by {reporter?.full_name || "Anonymous Citizen"}
+              </div>
+              <div className="w-full sm:w-auto sm:ml-auto flex items-center gap-2 mt-2 sm:mt-0">
+                <form action={async () => {
+                  "use server";
+                  const supabase = await createClient();
+                  await supabase.rpc('increment_vote', { issue_id: issue.id });
+                }}>
+                  <button className="flex items-center gap-1 bg-brand-50 text-brand-700 hover:bg-brand-100 px-3 py-1.5 rounded-full font-medium transition border border-brand-200">
+                    <span className="text-xs">👍</span> Upvote ({issue.vote_count || 0})
+                  </button>
+                </form>
+                
+                <a 
+                  href={`https://wa.me/?text=Please%20upvote%20this%20civic%20issue:%20https://problems-map.onrender.com/issues/${issue.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded-full font-medium transition border border-green-200"
+                >
+                  <span className="text-xs">💬</span> Share on WhatsApp
+                </a>
               </div>
             </div>
 
@@ -174,6 +194,25 @@ export default async function IssueDetailPage({
           {/* Verification Form (Only for officials when issue is RESOLUTION_SUBMITTED) */}
           {isOfficial && issue.status === "RESOLUTION_SUBMITTED" && (
             <VerificationForm issueId={issue.id} versionNumber={issue.version_number} />
+          )}
+
+          {/* Citizen Reopen/Dispute (When RESOLVED) */}
+          {isReporter && issue.status === "RESOLVED" && (
+            <div className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
+              <h3 className="text-lg font-bold text-blue-900 mb-2">Is the problem fully resolved?</h3>
+              <p className="text-sm text-blue-800 mb-4">
+                Officials have marked this issue as resolved. If you verified that the problem is not actually fixed, you can dispute the resolution.
+              </p>
+              <form action={async () => {
+                "use server";
+                const supabase = await createClient();
+                await supabase.from('issues').update({ status: 'REOPENED', version_number: issue.version_number + 1 }).eq('id', issue.id);
+              }}>
+                <button type="submit" className="bg-white border border-red-200 text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg text-sm font-medium transition">
+                  Dispute & Reopen Issue
+                </button>
+              </form>
+            </div>
           )}
         </div>
 

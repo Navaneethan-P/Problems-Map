@@ -106,7 +106,7 @@ export default async function CitizenDashboard() {
               </p>
               <div className="mt-6">
                 <Link
-                  href="/report"
+                  href="/citizen/report"
                   className="bg-brand-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-brand-700 transition"
                 >
                   Report your first issue

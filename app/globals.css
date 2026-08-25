@@ -1,0 +1,402 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────
+   Design Tokens
+   ───────────────────────────────────────────── */
+:root {
+  /* Brand palette */
+  --color-brand-50:  #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-500: #2563eb;
+  --color-brand-600: #1d4ed8;
+  --color-brand-700: #1e40af;
+  --color-brand-900: #1e3a8a;
+
+  /* Semantic status colors — never rely on color alone */
+  --color-emergency:  #dc2626; /* 🔴 EMERGENCY */
+  --color-high:       #f97316; /* 🟠 HIGH */
+  --color-normal:     #2563eb; /* 🔵 NORMAL */
+  --color-resolved:   #16a34a; /* 🟢 RESOLVED */
+  --color-neutral:    #64748b; /* ⚪ NEUTRAL */
+
+  /* Surface */
+  --color-surface:        #ffffff;
+  --color-surface-raised: #f8fafc;
+  --color-surface-sunken: #f1f5f9;
+  --color-border:         #e2e8f0;
+  --color-border-strong:  #cbd5e1;
+
+  /* Text */
+  --color-text-primary:   #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted:     #94a3b8;
+  --color-text-inverse:   #ffffff;
+
+  /* Typography */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Border radius */
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+
+  /* Transitions */
+  --transition-fast:   150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow:   400ms ease;
+
+  /* Map height */
+  --map-height-mobile: calc(100svh - 4rem);
+  --map-height-desktop: calc(100svh - 4rem);
+}
+
+/* ─────────────────────────────────────────────
+   Base Reset
+   ───────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  line-height: 1.6;
+}
+
+/* ─────────────────────────────────────────────
+   Focus styles (accessible)
+   ───────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ─────────────────────────────────────────────
+   Status badge system
+   Icon + text + aria-label — never color alone
+   ───────────────────────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.2rem var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.status-badge--emergency {
+  background: #fef2f2;
+  color: var(--color-emergency);
+  border: 1px solid #fecaca;
+}
+.status-badge--high {
+  background: #fff7ed;
+  color: var(--color-high);
+  border: 1px solid #fed7aa;
+}
+.status-badge--normal {
+  background: #eff6ff;
+  color: var(--color-normal);
+  border: 1px solid #bfdbfe;
+}
+.status-badge--resolved {
+  background: #f0fdf4;
+  color: var(--color-resolved);
+  border: 1px solid #bbf7d0;
+}
+.status-badge--neutral {
+  background: #f8fafc;
+  color: var(--color-neutral);
+  border: 1px solid var(--color-border);
+}
+
+/* ─────────────────────────────────────────────
+   Card component
+   ───────────────────────────────────────────── */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+.card--interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ─────────────────────────────────────────────
+   Map container
+   ───────────────────────────────────────────── */
+.map-container {
+  position: relative;
+  width: 100%;
+  height: var(--map-height-mobile);
+  overflow: hidden;
+}
+.map-container .maplibregl-map {
+  width: 100%;
+  height: 100%;
+}
+
+/* ─────────────────────────────────────────────
+   Issue marker — status-colored circle
+   ───────────────────────────────────────────── */
+.issue-marker {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.3);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+.issue-marker:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.4);
+  z-index: 10;
+}
+.issue-marker--emergency  { background: var(--color-emergency); }
+.issue-marker--high       { background: var(--color-high); }
+.issue-marker--normal     { background: var(--color-normal); }
+.issue-marker--resolved   { background: var(--color-resolved); }
+
+/* Cluster marker */
+.cluster-marker {
+  background: var(--color-brand-600);
+  color: white;
+  border-radius: 50%;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+.cluster-marker:hover { transform: scale(1.1); }
+
+/* ─────────────────────────────────────────────
+   Skeleton loading animation
+   ───────────────────────────────────────────── */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+.skeleton {
+  background: var(--color-surface-sunken);
+  border-radius: var(--radius-md);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────
+   Timeline component
+   ───────────────────────────────────────────── */
+.timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0.65rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border);
+}
+.timeline-item {
+  position: relative;
+  padding-bottom: var(--space-6);
+}
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -1.65rem;
+  top: 0.35rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-brand-500);
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px var(--color-brand-200);
+}
+.timeline-item--resolved::before { background: var(--color-resolved); }
+.timeline-item--emergency::before { background: var(--color-emergency); }
+
+/* ─────────────────────────────────────────────
+   Demo environment banner
+   ───────────────────────────────────────────── */
+.demo-banner {
+  background: #fef3c7;
+  border-bottom: 1px solid #fcd34d;
+  padding: 0.5rem var(--space-4);
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #92400e;
+}
+
+/* ─────────────────────────────────────────────
+   Official response styling
+   ───────────────────────────────────────────── */
+.official-response {
+  border-left: 4px solid var(--color-brand-500);
+  background: var(--color-brand-50);
+  padding: var(--space-4);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+.official-response-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: var(--color-brand-100);
+  color: var(--color-brand-700);
+  padding: 0.2rem var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ─────────────────────────────────────────────
+   Step indicator (report form)
+   ───────────────────────────────────────────── */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.step-circle {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  transition: all var(--transition-normal);
+}
+.step-circle--active {
+  background: var(--color-brand-500);
+  border-color: var(--color-brand-500);
+  color: white;
+}
+.step-circle--complete {
+  background: var(--color-resolved);
+  border-color: var(--color-resolved);
+  color: white;
+}
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: var(--color-border);
+  min-width: 2rem;
+  transition: background var(--transition-normal);
+}
+.step-connector--complete { background: var(--color-resolved); }
+
+/* ─────────────────────────────────────────────
+   GPS accuracy indicator
+   ───────────────────────────────────────────── */
+.gps-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.gps-indicator--high   { background: #f0fdf4; color: var(--color-resolved); }
+.gps-indicator--medium { background: #fff7ed; color: var(--color-high); }
+.gps-indicator--low    { background: #fef2f2; color: var(--color-emergency); }
+
+/* ─────────────────────────────────────────────
+   Micro-animations
+   ───────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-fade-in   { animation: fade-in 0.3s ease forwards; }
+.animate-slide-up  { animation: slide-up 0.3s ease forwards; }
+.animate-spin      { animation: spin 1s linear infinite; }
+
+/* ─────────────────────────────────────────────
+   Scrollbar styling
+   ───────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--color-border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* ─────────────────────────────────────────────
+   Print styles
+   ───────────────────────────────────────────── */
+@media print {
+  .no-print { display: none !important; }
+  .map-container { page-break-inside: avoid; }
+}

@@ -1,0 +1,8 @@
+- `[x]` Phase 1: Project & Database Foundation (Next.js, Tailwind, Supabase schema)
+- `[x]` Phase 2: Auth & Types (Supabase SSR clients, Schemas, TypeScript Interfaces, Route Protection)
+- `[x]` Phase 3: The Map Foundation (MapLibre View Component, Map clustering, Public Home Dashboard)
+- `[x]` Phase 4: Core Citizen Reporting (Multi-step Report Flow UI, Drafts, Image Upload API, Creation API)
+- `[x]` Phase 5: Official Dashboard & Workflow (Admin layout, metrics, Issue detail page, State Machine API)
+- `[/]` **VERTICAL-SLICE GATE** (Building & Testing the end-to-end flow)
+- `[ ]` Phase 6: Resolution & Evidence (Officer evidence upload API, Verification loop)
+- `[ ]` Phase 7: Polish & Deploy (Optimistic UI, Loading states, PWA manifest, Vercel prep)

@@ -59,7 +59,20 @@ DECLARE
 BEGIN
 
 -- ─────────────────────────────────────────────
--- Update demo user profiles (auth.users rows created by seed runner)
+-- Ensure demo users exist in auth.users (trigger will create profiles)
+-- ─────────────────────────────────────────────
+INSERT INTO auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+VALUES 
+  (v_citizen_id, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'citizen@demo.com', crypt('password123', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW()),
+  (v_officer_id, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'officer@demo.com', crypt('password123', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW()),
+  (v_verifier_id, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'verifier@demo.com', crypt('password123', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW()),
+  (v_mla_id, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'mla@demo.com', crypt('password123', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW()),
+  (v_dist_admin_id, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'distadmin@demo.com', crypt('password123', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW()),
+  (v_state_admin_id, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'stateadmin@demo.com', crypt('password123', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW())
+ON CONFLICT (id) DO NOTHING;
+
+-- ─────────────────────────────────────────────
+-- Update demo user profiles (auth.users row creation triggered this)
 -- ─────────────────────────────────────────────
 UPDATE public.profiles SET
   full_name = 'Demo Citizen',
@@ -75,13 +88,13 @@ WHERE id = v_officer_id;
 
 UPDATE public.profiles SET
   full_name = 'Demo Verifier',
-  role = 'VERIFIER',
+  role = 'FIELD_VERIFIER',
   account_status = 'ACTIVE'
 WHERE id = v_verifier_id;
 
 UPDATE public.profiles SET
   full_name = 'Demo MLA',
-  role = 'MLA',
+  role = 'MLA_MP',
   account_status = 'ACTIVE'
 WHERE id = v_mla_id;
 

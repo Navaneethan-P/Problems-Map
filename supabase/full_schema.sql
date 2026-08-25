@@ -1,4 +1,5 @@
-﻿-- Migration 001: Extensions
+﻿SET search_path = public, extensions, auth;
+-- Migration 001: Extensions
 -- Enable required PostgreSQL extensions for Problems Map
 
 -- PostGIS: spatial data types, functions, and operators

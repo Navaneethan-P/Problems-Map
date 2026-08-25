@@ -1636,7 +1636,7 @@ CREATE POLICY "profiles_own_update" ON public.profiles FOR UPDATE
     id = auth.uid()
     AND (
       public.has_role_at_least('SUPER_ADMIN')
-      OR (OLD.role = NEW.role)  -- role field unchanged
+      OR (role = (SELECT role FROM public.profiles WHERE id = profiles.id))
     )
   );
 
@@ -1705,7 +1705,7 @@ CREATE POLICY "issues_own_draft_update" ON public.issues FOR UPDATE
     reporter_id = auth.uid()
     -- Citizens cannot change these sensitive fields
     AND status IN ('DRAFT', 'SUBMITTED')
-    AND priority = OLD.priority  -- citizens cannot set their own priority
+    AND priority = (SELECT priority FROM public.issues WHERE id = issues.id)
   );
 
 -- Officers can update issues they own (workflow fields only â€” enforced by API layer too)

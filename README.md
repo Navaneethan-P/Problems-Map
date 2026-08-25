@@ -6,6 +6,21 @@ Problems Map is a civic accountability and infrastructure reporting platform. It
 
 This is a production-ready application featuring clean architecture, real database persistence, strict role-based authorization, and auditable history tracking. It is built as a zero-budget MVP architecture capable of scaling without requiring a complete rewrite.
 
+## Visual Showcase
+
+![Problems Map Demo](public/assets/docs/demo.webp)
+*Full platform demonstration from citizen report to official resolution.*
+
+### Core Interfaces
+
+| Landing Page | Interactive Public Map |
+|:---:|:---:|
+| ![Landing Page](public/assets/docs/landing.png) | ![Interactive Map](public/assets/docs/map.png) |
+
+| Citizen Registration | Secure Login |
+|:---:|:---:|
+| ![Registration](public/assets/docs/register.png) | ![Login](public/assets/docs/login.png) |
+
 ---
 
 ## 1. Product Vision

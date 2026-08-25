@@ -88,13 +88,13 @@ WHERE id = v_officer_id;
 
 UPDATE public.profiles SET
   full_name = 'Demo Verifier',
-  role = 'FIELD_VERIFIER',
+  role = 'VERIFIER',
   account_status = 'ACTIVE'
 WHERE id = v_verifier_id;
 
 UPDATE public.profiles SET
   full_name = 'Demo MLA',
-  role = 'MLA_MP',
+  role = 'MLA',
   account_status = 'ACTIVE'
 WHERE id = v_mla_id;
 

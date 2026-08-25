@@ -1417,7 +1417,10 @@ AS $$
     AND (p_category_id IS NULL OR i.category_id = p_category_id)
     AND (p_district_id IS NULL OR i.district_id = p_district_id)
   ORDER BY
-    CASE WHEN p_query <> '' THEN rank END DESC NULLS LAST,
+    CASE WHEN p_query <> '' THEN ts_rank(
+      to_tsvector('public.english_unaccent', i.title || ' ' || i.description),
+      plainto_tsquery('public.english_unaccent', p_query)
+    ) END DESC NULLS LAST,
     i.community_priority_score DESC,
     i.created_at DESC
   LIMIT p_limit

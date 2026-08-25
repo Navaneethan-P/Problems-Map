@@ -50,9 +50,9 @@ AS $$
   WHERE
     i.deleted_at IS NULL
     AND i.status NOT IN ('DRAFT', 'REJECTED', 'OUT_OF_SCOPE')
-    AND ST_Within(
-      i.location::geometry,
-      ST_MakeEnvelope(west, south, east, north, 4326)
+    AND ST_Intersects(
+      i.location,
+      ST_MakeEnvelope(west, south, east, north, 4326)::geography
     )
     AND (p_status IS NULL OR i.status = ANY(p_status))
     AND (p_priority IS NULL OR i.priority = ANY(p_priority))
@@ -220,37 +220,37 @@ BEGIN
 
   SELECT id INTO v_country_id
     FROM public.countries
-    WHERE ST_Within(v_point::geometry, geometry::geometry)
+    WHERE ST_Intersects(v_point, geometry)
     LIMIT 1;
 
   SELECT id INTO v_state_id
     FROM public.states
-    WHERE ST_Within(v_point::geometry, geometry::geometry)
+    WHERE ST_Intersects(v_point, geometry)
     LIMIT 1;
 
   SELECT id INTO v_district_id
     FROM public.districts
-    WHERE ST_Within(v_point::geometry, geometry::geometry)
+    WHERE ST_Intersects(v_point, geometry)
     LIMIT 1;
 
   SELECT id INTO v_taluk_id
     FROM public.taluks
-    WHERE ST_Within(v_point::geometry, geometry::geometry)
+    WHERE ST_Intersects(v_point, geometry)
     LIMIT 1;
 
   SELECT id INTO v_municipality_id
     FROM public.municipalities
-    WHERE ST_Within(v_point::geometry, geometry::geometry)
+    WHERE ST_Intersects(v_point, geometry)
     LIMIT 1;
 
   SELECT id INTO v_ward_id
     FROM public.wards
-    WHERE ST_Within(v_point::geometry, geometry::geometry)
+    WHERE ST_Intersects(v_point, geometry)
     LIMIT 1;
 
   SELECT id INTO v_constituency_id
     FROM public.constituencies
-    WHERE ST_Within(v_point::geometry, geometry::geometry)
+    WHERE ST_Intersects(v_point, geometry)
     LIMIT 1;
 
   RETURN QUERY SELECT
